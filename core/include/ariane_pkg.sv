@@ -66,7 +66,7 @@ package ariane_pkg;
       //                      DRAM,          Boot ROM,   Debug Module
       ExecuteRegionAddrBase: 1024'({64'h8000_0000, 64'h1_0000, 64'h0}),
       ExecuteRegionLength:   1024'({64'h40000000,  64'h10000,  64'h1000}),
-      // cached region
+      // cached region leesum: 更改 cache 的范围配置
       NrCachedRegionRules:   unsigned'(1),
       CachedRegionAddrBase:  1024'({64'h8000_0000}),
       CachedRegionLength:    1024'({64'h40000000}),
@@ -117,7 +117,7 @@ package ariane_pkg;
       end
       return |pass;
     endfunction : is_inside_execute_regions
-
+    // leesum : 可以改这里?
     function automatic logic is_inside_cacheable_regions (ariane_cfg_t Cfg, logic[63:0] address);
       automatic logic[NrMaxRules-1:0] pass;
       pass = '0;

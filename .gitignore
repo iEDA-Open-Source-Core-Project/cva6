@@ -43,3 +43,5 @@ xrun_results/
 /core/include/gen64_config_pkg.sv
 __pycache__
 .bender/
+riscv64-unknown-elf-gcc-8.3.0-2020.04.0-x86_64-linux-ubuntu14.tar.gz
+*.fst
