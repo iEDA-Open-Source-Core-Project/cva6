@@ -526,6 +526,8 @@ xrun-check-benchmarks:
 xrun-ci: xrun-asm-tests xrun-amo-tests xrun-mul-tests xrun-fp-tests xrun-benchmarks
 
 # verilator-specific
+# -f core/Flist.cva6
+# core/ysyx_cva6_core.sv
 verilate_command := $(verilator) verilator_config.vlt                                                            \
                     -f core/Flist.cva6                                                                           \
                     $(filter-out %.vhd, $(ariane_pkg))                                                           \
@@ -561,10 +563,48 @@ verilate_command := $(verilator) verilator_config.vlt                           
                     corev_apu/tb/dpi/remote_bitbang.cc corev_apu/tb/dpi/msim_helper.cc
 
 
+
+verilate_command_leesum := $(verilator) verilator_config.vlt                                                            \
+					/home/leesum/workhome/cva6/core/ysyx_cva6_core.sv \
+                    +define+$(defines)$(if $(TRACE_FAST),+VM_TRACE)$(if $(TRACE_COMPACT),+VM_TRACE+VM_TRACE_FST) \
+                    $(if $(verilator_threads), --threads $(verilator_threads))                                   \
+                    --unroll-count 256                                                                           \
+                    -Wall                                                                                        \
+                    -Werror-PINMISSING                                                                           \
+                    -Werror-IMPLICIT                                                                             \
+                    -Wno-fatal                                                                                   \
+                    -Wno-PINCONNECTEMPTY                                                                         \
+                    -Wno-ASSIGNDLY                                                                               \
+                    -Wno-DECLFILENAME                                                                            \
+                    -Wno-UNUSED                                                                                  \
+                    -Wno-UNOPTFLAT                                                                               \
+                    -Wno-BLKANDNBLK                                                                              \
+                    -Wno-style                                                                                   \
+                    $(if ($(PRELOAD)!=""), -DPRELOAD=1,)                                                         \
+                    $(if $(PROFILE),--stats --stats-vars --profile-cfuncs,)                                      \
+                    $(if $(DEBUG), --trace-structs,)                                                             \
+                    $(if $(TRACE_COMPACT), --trace-fst $(VERILATOR_ROOT)/include/verilated_fst_c.cpp)            \
+                    $(if $(TRACE_FAST), --trace $(VERILATOR_ROOT)/include/verilated_vcd_c.cpp,)                  \
+                    -LDFLAGS "-L$(RISCV)/lib -L$(SPIKE_ROOT)/lib -Wl,-rpath,$(RISCV)/lib -Wl,-rpath,$(SPIKE_ROOT)/lib -lfesvr$(if $(PROFILE), -g -pg,) -lpthread $(if $(TRACE_COMPACT), -lz,)" \
+                    -CFLAGS "$(CFLAGS)$(if $(PROFILE), -g -pg,) -DVL_DEBUG"                                      \
+                    --cc  --vpi                                                                                  \
+                    --top-module ariane_testharness                                               \
+                    --threads-dpi none                                                                           \
+                    --Mdir $(ver-library) -O3                                                                    \
+                    --exe corev_apu/tb/ariane_tb.cpp corev_apu/tb/dpi/SimDTM.cc corev_apu/tb/dpi/SimJTAG.cc      \
+                    corev_apu/tb/dpi/remote_bitbang.cc corev_apu/tb/dpi/msim_helper.cc
+
+
+
 # User Verilator, at some point in the future this will be auto-generated
 verilate:
 	@echo "[Verilator] Building Model$(if $(PROFILE), for Profiling,)"
 	$(verilate_command)
+	cd $(ver-library) && $(MAKE) -j${NUM_JOBS} -f Variane_testharness.mk
+# User Verilator, at some point in the future this will be auto-generated
+verilate_leesum:
+	@echo "[Verilator] Building Model$(if $(PROFILE), for Profiling,)"
+	$(verilate_command_leesum)
 	cd $(ver-library) && $(MAKE) -j${NUM_JOBS} -f Variane_testharness.mk
 
 sim-verilator: verilate

@@ -116,13 +116,13 @@ module cva6_icache import ariane_pkg::*; import wt_cache_pkg::*; #(
   assign cl_index    = vaddr_d[ICACHE_INDEX_WIDTH-1:ICACHE_OFFSET_WIDTH];
 
 
-  if (ArianeCfg.AxiCompliant) begin : gen_axi_offset
+  if (ArianeCfg.AxiCompliant) begin : gen_axi_offset // leesum
     // if we generate a noncacheable access, the word will be at offset 0 or 4 in the cl coming from memory
     assign cl_offset_d = ( dreq_o.ready & dreq_i.req)      ? {dreq_i.vaddr>>2, 2'b0} :
                          ( paddr_is_nc  & mem_data_req_o ) ? cl_offset_q[2]<<2 : // needed since we transfer 32bit over a 64bit AXI bus in this case
                                                              cl_offset_q;
     // request word address instead of cl address in case of NC access
-    assign mem_data_o.paddr = (paddr_is_nc) ? {cl_tag_d, vaddr_q[ICACHE_INDEX_WIDTH-1:3], 3'b0} :                                         // align to 64bit
+    assign mem_data_o.paddr = (paddr_is_nc) ? {cl_tag_d, vaddr_q[ICACHE_INDEX_WIDTH-1:2], 2'b0} :                                         // align to 32bit leesum: flash only supports 32bit access
                                               {cl_tag_d, vaddr_q[ICACHE_INDEX_WIDTH-1:ICACHE_OFFSET_WIDTH], {ICACHE_OFFSET_WIDTH{1'b0}}}; // align to cl
 end else begin : gen_piton_offset
     // icache fills are either cachelines or 4byte fills, depending on whether they go to the Piton I/O space or not.

@@ -163,9 +163,11 @@ module wt_axi_adapter import ariane_pkg::*; import wt_cache_pkg::*; #(
     end else begin
       // Cast to AXI address width
       axi_rd_addr = icache_data.paddr;
-      axi_rd_size  = $clog2(AxiDataWidth/8); // always request max number of words in case of ifill
-      if (!icache_data.nc) begin
+      if (!icache_data.nc) begin // leesum
         axi_rd_blen = ariane_pkg::ICACHE_LINE_WIDTH/AxiDataWidth-1;
+        axi_rd_size  = $clog2(AxiDataWidth/8); // always request max number of words in case of ifill
+      end else begin
+        axi_rd_size  = 3'b010; // leesum: if nocache, request only one word
       end
     end
 

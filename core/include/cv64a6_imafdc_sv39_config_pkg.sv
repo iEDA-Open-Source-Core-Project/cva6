@@ -17,7 +17,7 @@ package cva6_config_pkg;
 
     localparam CVA6ConfigXlen = 64;
 
-    localparam CVA6ConfigFpuEn = 1;
+    localparam CVA6ConfigFpuEn = 0;
     localparam CVA6ConfigF16En = 0;
     localparam CVA6ConfigF16AltEn = 0;
     localparam CVA6ConfigF8En = 0;
@@ -65,7 +65,7 @@ package cva6_config_pkg;
     localparam CVA6ConfigBTBEntries = 32;
     localparam CVA6ConfigBHTEntries = 128;
 
-    localparam CVA6ConfigNrPMPEntries = 8;
+    localparam CVA6ConfigNrPMPEntries = 0; // leesum: remove pmp
 
     localparam CVA6ConfigPerfCounterEn = 1;
 
@@ -73,7 +73,7 @@ package cva6_config_pkg;
 
     localparam CVA6ConfigMmuPresent = 1;
 
-    `define RVFI_PORT
+    //  `define RVFI_PORT // leesum: remove rcfi tracer
 
     // Do not modify
     `ifdef RVFI_PORT

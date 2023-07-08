@@ -1,19 +1,21 @@
 // See LICENSE.SiFive for license details.
 //VCS coverage exclude_file
 
-import "DPI-C" function int debug_tick
-(
-  output bit     debug_req_valid,
-  input  bit     debug_req_ready,
-  output int     debug_req_bits_addr,
-  output int     debug_req_bits_op,
-  output int     debug_req_bits_data,
 
-  input  bit        debug_resp_valid,
-  output bit        debug_resp_ready,
-  input  int        debug_resp_bits_resp,
-  input  int        debug_resp_bits_data
-);
+// leesum: remove dpic
+// import "DPI-C" function int debug_tick
+// (
+//   output bit     debug_req_valid,
+//   input  bit     debug_req_ready,
+//   output int     debug_req_bits_addr,
+//   output int     debug_req_bits_op,
+//   output int     debug_req_bits_data,
+
+//   input  bit        debug_resp_valid,
+//   output bit        debug_resp_ready,
+//   input  int        debug_resp_bits_resp,
+//   input  int        debug_resp_bits_data
+// );
 
 module SimDTM(
   input clk,
@@ -65,17 +67,18 @@ module SimDTM(
     end
     else
     begin
-      __exit = debug_tick(
-        __debug_req_valid,
-        __debug_req_ready,
-        __debug_req_bits_addr,
-        __debug_req_bits_op,
-        __debug_req_bits_data,
-        __debug_resp_valid,
-        __debug_resp_ready,
-        __debug_resp_bits_resp,
-        __debug_resp_bits_data
-      );
+      // leesum: remove dpic
+      // __exit = debug_tick(
+      //   __debug_req_valid,
+      //   __debug_req_ready,
+      //   __debug_req_bits_addr,
+      //   __debug_req_bits_op,
+      //   __debug_req_bits_data,
+      //   __debug_resp_valid,
+      //   __debug_resp_ready,
+      //   __debug_resp_bits_resp,
+      //   __debug_resp_bits_data
+      // );
     end
   end
 endmodule

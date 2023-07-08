@@ -72,8 +72,8 @@ module pmp #(
         end
     end else assign allow_o = 1'b1;
 
-    // synthesis translate_off
-    always @(*) begin
+    // synthesis translate_off 
+    always_latch  begin // leesum
         if(priv_lvl_i == riscv::PRIV_LVL_M) begin
             static logic no_locked = 1'b1;
             for (int i = 0; i < NR_ENTRIES; i++) begin
