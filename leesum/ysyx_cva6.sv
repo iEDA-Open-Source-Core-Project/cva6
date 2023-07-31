@@ -41097,7 +41097,7 @@ module axi2apb_64_32 #(
             WAIT_R_PREADY: begin
                 sample_AR = 1'b0;
                 read_req  = 1'b1;
-                address   = ARADDR; //LEESUM
+                address   = ARADDR;
 
                 if (PREADY == 1'b1) begin// APB is READY --> RDATA is AVAILABLE
                     if (ARLEN == 0) begin
