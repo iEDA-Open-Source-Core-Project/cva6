@@ -89,6 +89,7 @@ module scoreboard #(
 
   // the issue queue is full don't issue any new instructions
   // works since aligned to power of 2
+  // 利用两加法的溢出特性，最高为为溢出位
   assign issue_full = (issue_cnt_q[BITS_ENTRIES] == 1'b1);
 
   assign sb_full_o = issue_full;
@@ -137,7 +138,7 @@ module scoreboard #(
       // the decoded instruction we put in there is valid (1st bit)
       // increase the issue counter and advance issue pointer
       issue_en = 1'b1;
-      mem_n[issue_pointer_q] = {1'b1,                                      // valid bit
+      mem_n[issue_pointer_q] = {1'b1,                                      // valid bit issue bit
                                 ariane_pkg::is_rd_fpr(decoded_instr_i.op), // whether rd goes to the fpr
                                 decoded_instr                              // decoded instruction record
                                 };
@@ -212,6 +213,9 @@ module scoreboard #(
   end
 
   // FIFO counter updates
+  // commit_pointer_n 和 issue_pointer_n 指向同一个 fifo，有点类似于 fifo 的读写指针
+  // issue_pointer_n 每次加 1，commit_pointer_n 每次加 num_commit
+  // issue_cnt_n 为当前 fifo 中的有效指令数
   assign num_commit = (NR_COMMIT_PORTS == 2) ? commit_ack_i[1] + commit_ack_i[0] : commit_ack_i[0];
 
   assign issue_cnt_n         = (flush_i) ? '0 : issue_cnt_q         - num_commit + issue_en;
